@@ -1,7 +1,3 @@
-provider "kubernetes" {
-  config_path    = "~/.kube/config"
-}
-
 variable "deploy_module" {
   description = "Deployment module attributes"
   type = list(object({
