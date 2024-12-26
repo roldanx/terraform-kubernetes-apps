@@ -51,7 +51,6 @@ locals {
   }
 }
 
-
 module "deployment_module" {
   source = "./custom_child_module"
   
