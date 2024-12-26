@@ -1,4 +1,5 @@
 resource "random_pet" "instance" {
+  count = 2
   length = 2
 }
 
@@ -9,8 +10,9 @@ resource "kubernetes_namespace" "namespace" {
 }
 
 resource "kubernetes_pod" "pod" {
+  count = 2
   metadata {
-    name      = random_pet.instance.id
+    name      = random_pet.instance[count.index].id
     namespace = kubernetes_namespace.namespace.metadata[0].name
     labels = {
       version = "v2"
@@ -24,60 +26,42 @@ resource "kubernetes_pod" "pod" {
 
       env {
         name  = "environment"
-        value = "test"
+        value = "dev"
       }
 
       port {
         container_port = 80
       }
-
-      liveness_probe {
-        http_get {
-          path = "/"
-          port = 80
-
-          http_header {
-            name  = "X-Custom-Header"
-            value = "Awesome"
-          }
-        }
-
-        initial_delay_seconds = 3
-        period_seconds        = 3
-      }
     }
+  }
 
-    dns_config {
-      nameservers = ["1.1.1.1", "8.8.8.8", "9.9.9.9"]
-      searches    = ["example.com"]
+  depends_on = [random_pet.instance, kubernetes_namespace.namespace]
+}
 
-      option {
-        name  = "ndots"
-        value = 1
-      }
-
-      option {
-        name = "use-vc"
-      }
+locals {
+  deploy_module_attributes = {
+  deploy_module_GOD = {
+    local_name      = "nginx-module-god"
+    local_ns = kubernetes_namespace.namespace.metadata[0].name
+    },
+  deploy_module_SATAN = {
+    local_name      = "nginx-module-satan"
+    local_ns = kubernetes_namespace.namespace.metadata[0].name
     }
-
-    dns_policy = "None"
   }
 }
+
 
 module "deployment_module" {
-  source = "./module"
+  source = "./custom_child_module"
   
-  deploy_module = [
-  {
-    deploy_module_name      = "nginx-module-1"
-    deploy_module_namespace = kubernetes_namespace.namespace.metadata[0].name
-    deploy_module_image     = kubernetes_pod.pod.spec[0].container[0].image
-  },
-  {
-    deploy_module_name      = "nginx2-module-2"
-    deploy_module_namespace = kubernetes_namespace.namespace.metadata[0].name
-    deploy_module_image     = null
+  for_each = local.deploy_module_attributes
+
+  deploy_module_params = {
+    deploy_module_name      = each.value.local_name
+    deploy_module_namespace = each.value.local_ns
+    deploy_module_image     = "nginx:1.21.6"
   }
-  ]
 }
+
+data "kubernetes_nodes" "nodesX" {}

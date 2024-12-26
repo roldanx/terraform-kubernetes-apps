@@ -1,6 +1,10 @@
 # Local .terraform directories
 **/.terraform/*
 
+# Custom terraform configs
+terraform.tf
+providers.tf
+
 # .tfstate files
 *.tfstate
 *.tfstate.*

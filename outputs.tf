@@ -1,19 +1,14 @@
-output "pod_id" {
-  description = "ID of the Pod"
-  value       = kubernetes_pod.pod.id
-}
-
 output "pod_ns" {
   description = "NS of the Pod"
-  value       = kubernetes_pod.pod.metadata[0].namespace
+  value       = kubernetes_pod.pod[0].metadata[0].namespace
+  sensitive = true
 }
 
 output "pod_name" {
   description = "Name of the Pod"
-  value       = kubernetes_pod.pod.metadata[0].name
+  value       = kubernetes_pod.pod[*].metadata[0].name
 }
 
-output "pod_image" {
-  description = "Image of the Pod"
-  value       = kubernetes_pod.pod.spec[0].container[0].image
+output "node-ids" {
+  value = [for node in data.kubernetes_nodes.nodesX.nodes : node.spec.0.provider_id]
 }

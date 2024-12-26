@@ -1,0 +1,35 @@
+terraform {
+
+## Uncomment to execute runs and store tfstate in local
+#  backend "local" {
+#  }
+#
+#  required_providers {
+#    kubernetes = {
+#      source = "hashicorp/kubernetes"
+#      version = "2.35.1"
+#    }
+#    random = {
+#      source  = "hashicorp/random"
+#      version = "3.5.1"
+#    }
+#  }
+#}
+
+## Uncomment to execute runs and store tfstate in HCP 
+#  cloud { 
+#    organization = "roldanx-corp" 
+#    workspaces { 
+#      name = "roldanx-workspace" 
+#    } 
+#  } 
+
+
+## Uncomment to execute runs and store tfstate in local
+#  backend "kubernetes" {
+#    config_path   = "~/.kube/config"
+#    namespace     = "default"
+#    secret_suffix = "nginx-app"
+#  }
+
+}
