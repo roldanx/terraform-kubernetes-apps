@@ -10,7 +10,7 @@ resource "kubernetes_namespace" "namespace" {
 }
 
 resource "kubernetes_pod" "pod" {
-  count = 2
+  count = 1
   metadata {
     name      = random_pet.instance[count.index].id
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -18,19 +18,26 @@ resource "kubernetes_pod" "pod" {
       version = "v2"
     }
   }
-
   spec {
     container {
       image = var.pod_image
       name  = "nginx-terraform"
-
       env {
         name  = "environment"
         value = "dev"
       }
-
       port {
         container_port = 80
+      }
+      resources {
+        requests = {
+          cpu    = "100m"
+          memory = "200Mi"
+        }
+        limits = {
+          cpu    = "150m"
+          memory = "256Mi"
+        }
       }
     }
   }
@@ -38,6 +45,10 @@ resource "kubernetes_pod" "pod" {
   depends_on = [random_pet.instance, kubernetes_namespace.namespace]
 }
 
+
+# Think of your terraform as a programming function. You have values you can pass to it. Those are like tf variables. 
+# Then, you have variables inside the function that do various things, but are not a part of the interface. Consumers 
+# of your function wouldn't know anything about those private internal variables. Those are like tf locals.
 locals {
   deploy_module_attributes = {
   deploy_module_GOD = {

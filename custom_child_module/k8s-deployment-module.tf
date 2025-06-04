@@ -18,4 +18,14 @@ module "deploy" {
       internal_port = "8080"
     }
   ]
+  resources = {
+    requests = {
+      cpu    = "100m"
+      memory = "200Mi"
+    }
+    limits = {
+      cpu    = "150m"
+      memory = "256Mi"
+    }
+  }
 }
