@@ -10,7 +10,7 @@ resource "kubernetes_namespace" "namespace" {
 }
 
 resource "kubernetes_pod" "pod" {
-  count = 1
+  count = var.pod_amount
   metadata {
     name      = random_pet.instance[count.index].id
     namespace = kubernetes_namespace.namespace.metadata[0].name

@@ -1,10 +1,15 @@
 terraform {
-  cloud {
-    organization = "roldanx-corp"
-    workspaces {
-      name = "roldanx-workspace"
-    }
+
+  backend "local" {
   }
+
+  ## default credentials file path: "~/.hcp/credentials.hcl"
+  # backend "remote" {
+  #   organization = "roldanx-corp"
+  #   workspaces {
+  #     name = "roldanx-workspace"
+  #   }
+  # }
 
   required_providers {
     aws = {
@@ -14,11 +19,10 @@ terraform {
   }
 }
 
-# Configure the AWS Provider
 provider "aws" {
-  region = "eu-west-3"
-  access_key  = "<aws-access-key>"
-  secret_key  = "<aws-secret-key>"
+  shared_config_files      = ["~/.aws/config"]
+  shared_credentials_files = ["~/.aws/credentials"]
+  profile                  = "default"
 }
 
 data "aws_subnets" "example" {}
