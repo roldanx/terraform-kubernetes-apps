@@ -1,3 +1,8 @@
+provider "kubernetes" {
+  config_path = "/home/roldanx/.kube/config"
+#   config_context = "kind-kind"
+}
+
 module "apps" {
   source  = "app.terraform.io/roldanx-corp/apps/kubernetes"
   namespace = "tf"
